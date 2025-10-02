@@ -26,9 +26,14 @@ if os.uname().sysname == 'Darwin':
     IRIS_data_loc = '/Users/dml/Data/IRIS/'
     output_loc = '/Users/dml/python_output/IRIS_output/'
 else:
-    IRIS_data_loc = '/mnt/scratch/data/spruksk2/Data/IRIS/'
-    output_loc = '/mnt/scratch/data/spruksk2/python_output/IRIS_output/'
-
+    IRIS_data_loc = '/mnt/scratch/data/spruksk2/IRIS/'
+    output_loc = '/mnt/scratch/data/spruksk2/IRIS/python_output/IRIS_output/'
+#if os.uname().sysname == 'Darwin':
+ #   IRIS_data_loc = '/Users/dml/Data/IRIS/'
+  #  output_loc = '/Users/dml/python_output/IRIS_output/'
+#else:
+ #   IRIS_data_loc = '/home/staff/daithil/work/Data/IRIS/'
+  #  output_loc = '/home/staff/daithil/work/python_output/IRIS_output/'
 
 # Plot the output of the fitting routine
 def plot_iris_fits(int_map,dopp_map,width_map,vnt_map,asym_map,aspect_ratio,iris_window,event):
