@@ -4,6 +4,10 @@ import numpy as np
 
 # --- Load Doppler map only ---
 filename = "IRIS_fitting_Si_IV_1403_20160520_131758.asdf"
+#filename = "IRIS_fitting_C_II_1334_20160520_131758.asdf"
+#filename = "IRIS_fitting_C_II_1335_20160520_131758.asdf"
+#filename = "IRIS_fitting_Si_IV_1394_20160520_131758.asdf"
+#filename = "IRIS_fitting_Si_IV_1403_20160520_131758.asdf"
 with asdf.open(filename) as af:
     dopp_map = af.tree["dopp_map"]
 
