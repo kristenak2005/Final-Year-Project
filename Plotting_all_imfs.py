@@ -4,9 +4,7 @@ from matplotlib.ticker import AutoMinorLocator
 import asdf
 from WaLSAtools import WaLSAtools  # type: ignore
 
-# -------------------------
 # Plot style
-# -------------------------
 plt.rcParams.update({
     'font.size': 12,
     'axes.titlesize': 11,
@@ -20,16 +18,12 @@ plt.rcParams.update({
 plt.rc('axes', linewidth=1.0)
 plt.rc('lines', linewidth=1.4)
 
-# -------------------------
 # User settings
-# -------------------------
 cadence = 16.2
 target_y = -900
 imf_indices = [1]
 
-# -------------------------
-# Files and map names in wanted order (Mg → C → Si)
-# -------------------------
+# Files and map names in orde (Mg > C > Si)
 datasets = [
     {
         "filename": "IRIS_fitting_smooth_MgII_20160520_131758.asdf",
@@ -63,9 +57,6 @@ datasets = [
     },
 ]
 
-# -------------------------
-# Helper function
-# -------------------------
 def get_reconstructed_signal(filename, map_key, target_y, cadence, imf_indices):
     with asdf.open(filename) as af:
         mp = af.tree[map_key]
@@ -112,9 +103,6 @@ def get_reconstructed_signal(filename, map_key, target_y, cadence, imf_indices):
 
     return time, combined_imf, slit_pos[y_index]
 
-# -------------------------
-# Build figure
-# -------------------------
 fig, axes = plt.subplots(6, 1, figsize=(6, 12), constrained_layout=True)
 
 for ax, ds in zip(axes, datasets):
