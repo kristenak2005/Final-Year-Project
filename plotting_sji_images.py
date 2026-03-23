@@ -8,7 +8,6 @@ from astropy.time import Time
 #File path for SJI at 2832 showing the slit
 fitsfile = "/mnt/scratch/data/spruksk2/IRIS/20160520_131758/iris_l2_20160520_131758_3620110603_SJI_2832_t000.fits"
 time_plot = "2016-05-20T14:00:00"
-#SJI cadence in seconds
 cadence = 16.2
 with fits.open(fitsfile) as hdul:
     data = hdul[0].data.astype(float)
@@ -16,12 +15,9 @@ with fits.open(fitsfile) as hdul:
 
 print("Data shape:", data.shape)
 print("DATE_OBS =", header.get("DATE_OBS"))
-
-# Convert times
 target_time = Time(time_plot, format="isot", scale="utc")
 start_time = Time(header["DATE_OBS"], format="isot", scale="utc")
 
-# Convert target time to frame index
 idx = int(np.round((target_time - start_time).sec / cadence))
 idx = np.clip(idx, 0, data.shape[0] - 1)
 
@@ -29,7 +25,6 @@ print("Chosen frame index:", idx)
 
 frame = data[idx]
 
-# ----- Axes from FITS header -----
 nx = header["NAXIS1"]
 ny = header["NAXIS2"]
 
@@ -46,9 +41,7 @@ x = (np.arange(nx) + 1 - crpix1) * cdelt1 + crval1
 y = (np.arange(ny) + 1 - crpix2) * cdelt2 + crval2
 
 extent = [x.min(), x.max(), y.min(), y.max()]
-# ---------------------------------
 
-# Contrast scaling
 vmin, vmax = np.nanpercentile(frame, [1, 99.5])
 
 plt.figure(figsize=(8, 8))
