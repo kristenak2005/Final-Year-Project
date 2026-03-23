@@ -6,55 +6,25 @@ import asdf
 
 from WaLSAtools import WaLSAtools
 
-
-# -------------------------
-# User settings
-# -------------------------
 filename = "IRIS_fitting_C_II_1334_20160520_131758.asdf"
 FALLBACK_CADENCE_S = 16.2
 target_y = -90
-
-
-# -------------------------
-# Load ASDF
-# -------------------------
 with asdf.open(filename) as af:
     dopp_map = af.tree["asym_map"]
     meta = dict(dopp_map.meta)
 
 data = np.asarray(dopp_map.data)
 ny, nx = data.shape
-
-
-# -------------------------
-# Time axis
-# -------------------------
 cadence = float(meta.get("STEPT_AV", FALLBACK_CADENCE_S))
 time = np.arange(nx) * cadence
-
-
-# -------------------------
-# Slit position
-# -------------------------
 slit_pos = float(meta["crval2"]) + float(meta["cdelt2"]) * (np.arange(ny) - float(meta["crpix2"]))
 y_index = int(np.argmin(np.abs(slit_pos - target_y)))
-
-
-# -------------------------
-# Extract time series
-# -------------------------
 v_time = data[y_index, :].astype(float)
-
 mask = np.isfinite(v_time) & np.isfinite(time)
 v_time = v_time[mask]
 time = time[mask]
 
 signal = v_time - np.nanmean(v_time)
-
-
-# -------------------------
-# Sampling diagnostics
-# -------------------------
 dt = float(np.median(np.diff(time)))
 fs = 1.0 / dt
 f_nyq = fs / 2.0
@@ -65,10 +35,6 @@ print(f"Median dt used (s):   {dt:.3f}")
 print(f"Sampling rate (Hz):   {fs:.5f}")
 print(f"Nyquist freq (Hz):    {f_nyq:.5f}")
 
-
-# -------------------------
-# EMD + HHT
-# -------------------------
 (
     HHT_power_spectrum,
     HHT_significance_level,
@@ -84,10 +50,6 @@ print(f"Nyquist freq (Hz):    {f_nyq:.5f}")
     method="emd",
     siglevel=0.95,
 )
-
-# -------------------------
-# Plot settings
-# -------------------------
 plt.rcParams.update({
     "font.size": 12,
     "axes.titlesize": 11,
@@ -101,11 +63,6 @@ significance_threshold = 0.05
 
 tmin = float(np.nanmin(time))
 tmax = float(np.nanmax(time))
-
-
-# -------------------------
-# Figure layout
-# -------------------------
 fig = plt.figure(figsize=(8, 9), constrained_layout=True)
 
 gs = gridspec.GridSpec(
@@ -115,10 +72,6 @@ gs = gridspec.GridSpec(
     figure=fig
 )
 
-
-# -------------------------
-# Plot IMFs
-# -------------------------
 for i, imf in enumerate(imfs):
 
     ax = fig.add_subplot(gs[i,0])
@@ -141,10 +94,6 @@ for i, imf in enumerate(imfs):
     if i == 0:
         ax.set_title("(a) Empirical Mode Decomposition")
 
-
-# -------------------------
-# HHT marginal spectrum
-# -------------------------
 ax_hht = fig.add_subplot(gs[-2,0])
 
 HHT_freq_bins = np.asarray(HHT_freq_bins)
@@ -166,8 +115,6 @@ ax_hht.set_ylim(bottom=0)
 ax_hht.xaxis.set_minor_locator(AutoMinorLocator(5))
 ax_hht.yaxis.set_minor_locator(AutoMinorLocator(5))
 
-
-# ---- Period axis (top) ----
 ax_top_hht = ax_hht.twiny()
 ax_top_hht.set_xlim(ax_hht.get_xlim())
 
@@ -181,9 +128,6 @@ ax_top_hht.set_xticklabels(period_labels)
 
 ax_top_hht.set_xlabel("Period (minutes)")
 
-# -------------------------
-# FFT spectra
-# -------------------------
 ax_fft = fig.add_subplot(gs[-1,0])
 
 for i,(xf,psd) in enumerate(psd_spectra_fft):
@@ -211,8 +155,6 @@ ax_fft.set_ylim(bottom=0)
 ax_fft.xaxis.set_minor_locator(AutoMinorLocator(5))
 ax_fft.yaxis.set_minor_locator(AutoMinorLocator(5))
 
-
-# ---- Period axis (top) ----
 ax_top_fft = ax_fft.twiny()
 ax_top_fft.set_xlim(ax_fft.get_xlim())
 
