@@ -17,7 +17,7 @@ datasets = [
 target_ys = [-90.0, -75.0]
 
 plt.rcParams.update({
-    "font.size": 11,       
+    "font.size": 11,
     "axes.labelsize": 11,
     "axes.titlesize": 11,
     "xtick.labelsize": 10,
@@ -27,11 +27,12 @@ plt.rcParams.update({
 
 fig, axes = plt.subplots(
     len(datasets), 2,
-    figsize=(7.0, 10.5),  
+    figsize=(7.0, 10.5),
     sharex=False,
     sharey=False,
     constrained_layout=True
 )
+
 # Minutes
 periods_min = [5, 3]
 period_freqs = [1.0 / (p * 60.0) for p in periods_min]   # Hz
@@ -82,8 +83,7 @@ for row, (filename, map_key, label) in enumerate(datasets):
             siglevel=0.95,
         )
 
-       
-        # IMF 2 + IMF 3 in time domain
+        # IMF 2 + IMF 3
         imf23_signal = np.asarray(imfs[1], dtype=float) + np.asarray(imfs[2], dtype=float)
         imf23_signal = imf23_signal - np.mean(imf23_signal)
 
@@ -97,14 +97,14 @@ for row, (filename, map_key, label) in enumerate(datasets):
         xf_plot = xf[mask_fft]
         psd_plot = psd[mask_fft]
 
-        ax.plot(xf_plot, psd_plot, color="black", linewidth=1.0, label="IMF 2 + IMF 3")
+        ax.plot(xf_plot, psd_plot, color="black", linewidth=1.0)
 
-        # Red vertical lines at 5, 3, 2 minutes
+        # Red vertical lines at 5 and 3 minutes
         for pf in period_freqs:
-            if pf <= f_nyq:
+            if pf <= 0.02:
                 ax.axvline(pf, color="red", linestyle="--", linewidth=1.0, alpha=0.9)
 
-        ax.set_xlim(0, f_nyq)
+        ax.set_xlim(0, 0.02)
         ax.set_ylim(bottom=0)
 
         ax.xaxis.set_minor_locator(AutoMinorLocator(5))
@@ -121,14 +121,13 @@ for row, (filename, map_key, label) in enumerate(datasets):
             ax.set_xlabel("")
             ax.tick_params(labelbottom=False)
 
-        if col == 0:
-            ax.text(
-                0.02, 0.88, label,
-                transform=ax.transAxes,
-                fontsize=10,
-                ha="left",
-                va="top"
-            )
+        ax.text(
+            0.98, 0.88, label,
+            transform=ax.transAxes,
+            fontsize=10,
+            ha="right",
+            va="top"
+        )
 
         if row == 0:
             ax.set_title(f'Y = {actual_y:.1f}"')
@@ -141,7 +140,7 @@ for row, (filename, map_key, label) in enumerate(datasets):
             top_labels = []
 
             for pmin, pf in zip(periods_min, period_freqs):
-                if pf <= f_nyq:
+                if pf <= 0.02:
                     top_ticks.append(pf)
                     top_labels.append(f"{pmin}")
 
@@ -149,9 +148,6 @@ for row, (filename, map_key, label) in enumerate(datasets):
             ax_top.set_xticklabels(top_labels)
             ax_top.set_xlabel("Period (min)")
             ax_top.tick_params(axis="x", which="major", direction="out", length=5, width=0.9)
-
-        if row == 0 and col == 0:
-            ax.legend(loc="upper right", frameon=False)
 
 plt.savefig("images/fft_imf23_90_75.png", bbox_inches="tight")
 plt.show()
